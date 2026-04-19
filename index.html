@@ -177,6 +177,11 @@
   .scop-name { font-size: 12px; color: var(--text); margin-bottom: 2px; }
   .scop-class { font-size: 11px; color: var(--muted); }
 
+  .protein-keywords { font-size: 12px; color: var(--muted); margin-top: 10px; }
+  .protein-keywords strong { color: #64748b; font-weight: 500; }
+  .nav-links { display: flex; gap: 6px; margin-top: 12px; flex-wrap: wrap; }
+  .nav-link { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--muted); background: var(--surface2); border: 1px solid var(--border); padding: 4px 12px; cursor: pointer; transition: all 0.15s; text-decoration: none; display: inline-block; }
+  .nav-link:hover { color: var(--accent); border-color: var(--accent); background: rgba(0,212,255,0.06); }
   @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
   .anim { animation: fadeUp 0.4s ease forwards; opacity: 0; }
   .anim:nth-child(1) { animation-delay: 0s; } .anim:nth-child(2) { animation-delay: 0.07s; }
@@ -782,7 +787,16 @@ function render(uni, strData, iprData, reactData, mainGene, pdbEntries, pmMeta, 
           <div class="protein-organism">${esc(organism)}</div>
           <div class="protein-badges">
             ${reviewed ? '<span class="badge badge-green">● Swiss-Prot</span>' : '<span class="badge badge-amber">TrEMBL</span>'}
-            ${keywords.map(k=>`<span class="badge badge-blue">${esc(k)}</span>`).join('')}
+          </div>
+          ${keywords.length ? `<div class="protein-keywords"><strong>Keywords:</strong> ${keywords.map(k=>esc(k)).join(', ')}</div>` : ''}
+          <div class="nav-links">
+            ${pdbCount ? `<a class="nav-link" onclick="document.getElementById('sec-structure').scrollIntoView({behavior:'smooth'})">3D Structure</a>` : ''}
+            <a class="nav-link" onclick="document.getElementById('sec-network').scrollIntoView({behavior:'smooth'})">Interactions</a>
+            <a class="nav-link" onclick="document.getElementById('sec-domains').scrollIntoView({behavior:'smooth'})">Domains</a>
+            <a class="nav-link" onclick="document.getElementById('sec-pathways').scrollIntoView({behavior:'smooth'})">Pathways</a>
+            <a class="nav-link" onclick="document.getElementById('sec-location').scrollIntoView({behavior:'smooth'})">Localisation</a>
+            ${diseases.length ? `<a class="nav-link" onclick="document.getElementById('sec-diseases').scrollIntoView({behavior:'smooth'})">Diseases</a>` : ''}
+            ${seq ? `<a class="nav-link" onclick="document.getElementById('sec-sequence').scrollIntoView({behavior:'smooth'})">Sequence</a>` : ''}
           </div>
         </div>
       </div>
@@ -799,7 +813,7 @@ function render(uni, strData, iprData, reactData, mainGene, pdbEntries, pmMeta, 
     </div>
 
     ${pdbCount ? `
-    <div class="panel anim">
+    <div id="sec-structure" class="panel anim">
       <div class="panel-header">
         <div class="panel-icon" style="color:#00d4ff">◈</div>
         <div class="panel-title">3D Structure Viewer</div>
@@ -840,7 +854,7 @@ function render(uni, strData, iprData, reactData, mainGene, pdbEntries, pmMeta, 
       </div>
     </div>` : ''}
 
-    <div class="panel anim" style="margin-bottom:20px">
+    <div id="sec-network" class="panel anim" style="margin-bottom:20px">
       <div class="panel-header">
         <div class="panel-icon" style="color:#10b981">◎</div>
         <div class="panel-title">Interaction Network</div>
@@ -869,7 +883,7 @@ function render(uni, strData, iprData, reactData, mainGene, pdbEntries, pmMeta, 
     </div>
 
     <div class="grid-2 anim">
-      <div class="panel">
+      <div id="sec-domains" class="panel">
         <div class="panel-header">
           <div class="panel-icon" style="color:#7c3aed">◈</div>
           <div class="panel-title">InterPro Domains & Families</div>
@@ -890,7 +904,7 @@ function render(uni, strData, iprData, reactData, mainGene, pdbEntries, pmMeta, 
           }).join('') : '<div class="empty">No InterPro entries found</div>'}
         </div>
       </div>
-      <div class="panel">
+      <div id="sec-pathways" class="panel">
         <div class="panel-header">
           <div class="panel-icon" style="color:#f59e0b">⬡</div>
           <div class="panel-title">Reactome Pathways</div>
@@ -941,7 +955,7 @@ function render(uni, strData, iprData, reactData, mainGene, pdbEntries, pmMeta, 
     </div>` : ''}
 
     <div class="grid-2 anim">
-      <div class="panel">
+      <div id="sec-location" class="panel">
         <div class="panel-header">
           <div class="panel-icon" style="color:#a78bfa">◉</div>
           <div class="panel-title">Subcellular Localization</div>
@@ -951,7 +965,7 @@ function render(uni, strData, iprData, reactData, mainGene, pdbEntries, pmMeta, 
           ${locations.length ? locations.map(l=>`<span class="location-pill">${esc(l)}</span>`).join('') : '<div class="empty">No location data</div>'}
         </div>
       </div>
-      <div class="panel">
+      <div id="sec-diseases" class="panel">
         <div class="panel-header">
           <div class="panel-icon" style="color:#ef4444">◆</div>
           <div class="panel-title">Associated Diseases</div>
@@ -967,7 +981,7 @@ function render(uni, strData, iprData, reactData, mainGene, pdbEntries, pmMeta, 
       </div>
     </div>
 
-    ${seq ? `<div class="panel anim">
+    ${seq ? `<div id="sec-sequence" class="panel anim">
       <div class="panel-header">
         <div class="panel-icon" style="color:#00d4ff">≡</div>
         <div class="panel-title">Protein Sequence</div>
@@ -1294,6 +1308,5 @@ function buildNet(center, interactions, allEdges) {
   });
 }
 </script>
-  <!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "49e5f1f0658e40cf86d4fe78b516ba01"}'></script><!-- End Cloudflare Web Analytics -->
 </body>
 </html>
