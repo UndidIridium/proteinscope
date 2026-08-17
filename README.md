@@ -10,7 +10,7 @@ Enter a gene symbol, UniProt accession, or PDB code and get a consolidated view 
 
 ## Live demo
 
-> Deploy to GitHub Pages (see [Deployment](#deployment)) and paste the URL here.
+> https://undidiridium.github.io/proteinscope/
 
 ---
 
